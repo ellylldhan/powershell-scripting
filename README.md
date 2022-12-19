@@ -5,7 +5,7 @@ Powershell Sysadmin Utilities
 More on https://gitlab.com/ellylldhan 
 
 
-D'après @FredPowers Powershell.  :)
+D'après [@FredPowers](https://github.com/FredPowers) Powershell.  :)
 
 [TOC]
 

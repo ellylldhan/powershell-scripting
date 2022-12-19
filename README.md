@@ -88,3 +88,13 @@ PS> gitpush
 
 - alias **ps2exe** fonctionne aussi
 - dans la mesure où le .exe est placé dans un dossier connu du **PATH**
+
+
+## getAllUsers.ps1
+
+Permet de voir qui est connecté sur quel ordinateur de l'AD. Comme un `quser` mais en plus long. 
+
+
+## getADComputers.ps1
+
+Permet de lister certains ordinateurs de l'AD. Ici, ceux qui sont activés.

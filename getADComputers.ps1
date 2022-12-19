@@ -1,0 +1,1 @@
+ get-adcomputer -filter * -property * | ? {$_.enabled -like $true} | select name  -first 5 | ft -autosize -HideTableHeaders

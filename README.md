@@ -14,19 +14,50 @@ Convertisseur DECIMAL <=> BINAIRE pour IP, avec marquage du masque
 
 **Usage** : 
 
-- Pour l'instant, modifier à la dure les variables dans le script 
-- TODO: prendre les arguments en input, en CLI et/ou avec `read-host`.
+```
+PS> calc_ip_reseau.ps1       # les arguments sont codés en dur dans le code source
+```
+
+**Output** :
 
 ```
-Output :
---------
-
 DEC to BIN                  192.168.35.12 / 17 => 11000000101010000010001100001100
 BIN to DEC    01010000101000100110010100111100 => 80.162.101.60
 Nice Display                     192.168.35.12 => 11000000.10101000.0 | 0100011.00001100
 Nice Display  01010000101000100110010100111100 => 01010000.10100010.0 | 1100101.00111100
 ```
 
+**TODO**:
+
+- Prendre les arguments en CLI ou avec un READ-HOST.
+
+### calc_ip_reseau.ps1
+Calculateur d'adresses réseau d'après une IP et un masque.
+
+**Usage** 
+
+```
+PS> calc_ip_reseau.ps1
+```
+
+**Output**: 
+
+```
+ex. 10.14.23.15 / 14
+-------------------------------------------------------------
+DEBUG - IP Donnée        00001010000011100001011100001111         10.14.23.15
+DEBUG - Masque donné     14
+DEBUG - IP Réseau        00001010.000011 | 00.00000000.00000000   10.12.0.0
+DEBUG - IP First Host    00001010.000011 | 00.00000000.00000001   10.12.0.1
+DEBUG - IP Last Host     00001010.000011 | 11.11111111.11111110   10.15.255.254
+DEBUG - IP Broadcast     00001010.000011 | 11.11111111.11111111   10.15.255.255
+-------------------------------------------------------------
+```
+
+**TODO**:
+
+- Prendre les arguments en CLI ou avec un READ-HOST.
+- Tout calculer en binaire plutôt que parcourir la chaîne de caractères ?
 
 
 ### gitpush.ps1

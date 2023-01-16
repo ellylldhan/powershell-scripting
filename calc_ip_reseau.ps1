@@ -77,9 +77,13 @@ function Calcul_Reseaux($AdresseIP, $Masque) {
     $ip4 = convertIPToDec($ipLastHost)
     $ip5 = convertIPToDec($ipBroadcast)
 
+    $mask_bin = Calc_Mask($mask)
+    $mask_ip  = convertIPToDec($mask_bin)
+
     write-host '-------------------------------------------------------------'
     write-host "DEBUG - IP Donnée       " $ipBinString $ip1
     write-host "DEBUG - Masque donné    " $Masque
+    Write-Host "DEBUG - IP Masque       " $mask_bin $mask_ip
     Write-Host "DEBUG - IP Réseau       " $ipReseauBin $ip2
     Write-Host "DEBUG - IP First Host   " $ipFirstHost $ip3
     Write-Host "DEBUG - IP Last Host    " $ipLastHost  $ip4
@@ -201,10 +205,29 @@ function convertIPToDec($ip) {
     return $listeIP
 }
 
-$ip = '10.14.23.15'
-$mask = 14
+
+function Calc_Mask($mask) {
+    $str=''
+
+    for ($i=0; $i -lt 32; $i++) {
+        if ($i -lt $mask) {
+            $str += '1'
+        } else {
+            $str += '0'
+        }
+    }
+
+    return $str
+}
+
+
+$ip = '192.168.128.0'
+$mask = 17
+
 
 write-host "ex. $ip / $mask"
+
+
 
 Calcul_Reseaux $ip $mask
 

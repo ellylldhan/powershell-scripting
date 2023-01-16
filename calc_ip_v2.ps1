@@ -205,7 +205,7 @@ $ip1 = '01010000101000100110010100111100'
 $mask = 17
 $resultat = niceDisplayIpBin $ip1 $mask
 
-$ip2='192.168.35.12'
+$ip2='192.168.128.0'
 $mk2=17
 
 $dec2bin=(convertDecToBin $ip2)

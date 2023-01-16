@@ -77,7 +77,7 @@ function Calcul_Reseaux($AdresseIP, $Masque) {
     $ip4 = convertIPToDec($ipLastHost)
     $ip5 = convertIPToDec($ipBroadcast)
 
-    $mask_bin = Calc_Mask($mask)
+    $mask_bin = niceDisplayIpBin(Calc_Mask($mask))
     $mask_ip  = convertIPToDec($mask_bin)
 
     write-host '-------------------------------------------------------------'
@@ -221,13 +221,37 @@ function Calc_Mask($mask) {
 }
 
 
-$ip = '192.168.128.0'
-$mask = 17
+#############
+## M A I N ##
+#############
 
+Write-host "Bienvenue dans l'outil de calcul d'adresse réseau :"
 
-write-host "ex. $ip / $mask"
+$choix = $null
+while (($choix -ne 4) -or ($choix -ne 'q')) {
+    write-host ""
+    write-host "   1) Calcul depuis adresse ip et masque en décimal (ex. 192.168.1.1/24)"
+    Write-host "   *) Quitter"
+    write-host ""
+    $choix = Read-host "Entrez votre choix"
 
+    if ($choix -eq 1) {
+        # Calcul d'adresses réseau
+        #TODO: nettoyage du prompt de la fonction Calcul_Reseaux
+        while (($ip -ne 'q') -or ($choix -ne 'q')) {
+            write-host ""
+            write-host "(entrez 'q' pour quitter)"
+            Write-Host ""
+            $ip   = Read-Host "Entrez une adresse ip (ex. 10.52.1.0) :"
+            $mask = Read-Host "Entrez un masque au format CIDR (ex. 24) :"
 
+            Calcul_Reseaux $ip $mask
 
-Calcul_Reseaux $ip $mask
+        }
+    } else {
+        # Comportement par défaut
+        write-host "Bye !"
+        break
+    }
+}
 

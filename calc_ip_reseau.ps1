@@ -71,23 +71,23 @@ function Calcul_Reseaux($AdresseIP, $Masque) {
     }
 
     # Convertion en DECIMAL
-    $ip1 = convertIPToDec($ipBinString)
-    $ip2 = convertIPToDec($ipReseauBin)
-    $ip3 = convertIPToDec($ipFirstHost)
-    $ip4 = convertIPToDec($ipLastHost)
-    $ip5 = convertIPToDec($ipBroadcast)
+    $ip1 = convertIpBinToDec($ipBinString)
+    $ip2 = convertIpBinToDec($ipReseauBin)
+    $ip3 = convertIpBinToDec($ipFirstHost)
+    $ip4 = convertIpBinToDec($ipLastHost)
+    $ip5 = convertIpBinToDec($ipBroadcast)
 
-    $mask_bin = niceDisplayIpBin(Calc_Mask($mask))
-    $mask_ip  = convertIPToDec($mask_bin)
+    $mask_bin = niceDisplayIpBin(Calc_Mask($Masque))
+    $mask_ip  = convertIpBinToDec($mask_bin)
 
     write-host '-------------------------------------------------------------'
-    write-host "DEBUG - IP Donnée       " $ipBinString $ip1
-    write-host "DEBUG - Masque donné    " $Masque
-    Write-Host "DEBUG - IP Masque       " $mask_bin $mask_ip
-    Write-Host "DEBUG - IP Réseau       " $ipReseauBin $ip2
-    Write-Host "DEBUG - IP First Host   " $ipFirstHost $ip3
-    Write-Host "DEBUG - IP Last Host    " $ipLastHost  $ip4
-    Write-Host "DEBUG - IP Broadcast    " $ipBroadcast $ip5
+    write-host "IP Donnée       " $ipBinString $ip1
+    write-host "Masque donné    " $Masque
+    Write-Host "IP Masque       " $mask_bin $mask_ip
+    Write-Host "IP Réseau       " $ipReseauBin $ip2
+    Write-Host "IP First Host   " $ipFirstHost $ip3
+    Write-Host "IP Last Host    " $ipLastHost  $ip4
+    Write-Host "IP Broadcast    " $ipBroadcast $ip5
     write-host '-------------------------------------------------------------'
     
     # TODO: function convertIPToBin: string
@@ -131,7 +131,7 @@ function convertBinToDec($ip) {
     return $listeIP
 }
 
-function convertDecToBin($ipDec) {
+function convertIpDecToBin($ipDec) {
     # IN  : 192.168.0.12
     # OUT : 01010000101000100110010100111100
     $ipDecListe = $ipDec.Split('.')
@@ -182,7 +182,7 @@ function niceDisplayIpBin($ip, $masque) {
 
 # function niceDisplayIpDec($ip, $mask) {}
 
-function convertIPToDec($ip) {
+function convertIpBinToDec($ip) {
     $ip = $ip.Replace('.', '')
     $ip = $ip.Replace('|', '')
     $ip = $ip.Replace(' ', '')
@@ -225,29 +225,105 @@ function Calc_Mask($mask) {
 ## M A I N ##
 #############
 
-Write-host "Bienvenue dans l'outil de calcul d'adresse réseau :"
+Write-host "Bienvenue dans l'outil de calcul d'adresse réseau !"
 
 $choix = $null
 while (($choix -ne 4) -or ($choix -ne 'q')) {
     write-host ""
     write-host "   1) Calcul depuis adresse ip et masque en décimal (ex. 192.168.1.1/24)"
-    Write-host "   *) Quitter"
+    write-host "   2) Convertir une IP décimal en binaire (sans masque)"
+    write-host "   3) Convertir une IP décimal en binaire (avec masque)"
+    Write-host "   4) Quitter"
     write-host ""
     $choix = Read-host "Entrez votre choix"
 
     if ($choix -eq 1) {
         # Calcul d'adresses réseau
         #TODO: nettoyage du prompt de la fonction Calcul_Reseaux
-        while (($ip -ne 'q') -or ($choix -ne 'q')) {
-            write-host ""
+        while (($ip -ne 'q') -or ($mask -ne 'q')) {
+            Write-Host ""
+            write-host "----------------------------"
+            write-host "1. CALCUL D'ADRESSAGE RESEAU"
+            write-host "----------------------------"
             write-host "(entrez 'q' pour quitter)"
             Write-Host ""
-            $ip   = Read-Host "Entrez une adresse ip (ex. 10.52.1.0) :"
-            $mask = Read-Host "Entrez un masque au format CIDR (ex. 24) :"
+            $ip   = Read-Host "Entrez une adresse ip (ex. 10.52.1.0)"
+            if($ip -eq 'q') {
+                $choix = $null
+                $ip = $null
+                $mask = $null
+                break
+            }
+
+            $mask = Read-Host "Entrez un masque au format CIDR (ex. 24)"
+            if($mask -eq 'q') {
+                $choix = $null
+                $ip = $null
+                $mask = $null
+                break
+            }
 
             Calcul_Reseaux $ip $mask
-
         }
+    
+    } elseif ($choix -eq 2) {
+        # Convertir IP DECIMAL en BINAIRE
+        while ($ip -ne 'q') {
+            Write-Host ""
+            write-host "----------------------------------------------"
+            write-host "2. CONVERTISSEUR IP DEC > IP BIN (sans masque)"
+            write-host "----------------------------------------------"
+            write-host "(entrez 'q' pour quitter)"
+            Write-Host ""
+            $ip   = Read-Host "Entrez une adresse ip (ex. 10.52.1.0)"
+            
+            if($ip -eq 'q') {
+                $choix = $null
+                $ip = $null
+                $mask = $null
+                break
+            }
+     
+            $ipBinFormatted = NiceDisplayIpBin(convertIpDecToBin $ip)
+
+            write-host "==> " $ipBinFormatted
+        }
+    } elseif ($choix -eq 3) {
+        # Convertir IP DECIMAL en BINAIRE avec séparation du masque
+        while (($ip -ne 'q') -or ($mask -ne 'q'))  {
+            Write-Host ""
+            write-host "----------------------------------------------"
+            write-host "3. CONVERTISSEUR IP DEC > IP BIN (avec masque)"
+            write-host "----------------------------------------------"
+            write-host "(entrez 'q' pour quitter)"
+            Write-Host ""
+            $ip   = Read-Host "Entrez une adresse ip (ex. 10.52.1.0)"
+
+            if($ip -eq 'q') {
+                $choix = $null
+                $ip = $null
+                $mask = $null
+                break
+            }
+
+           $mask = Read-Host "Entrez un masque au format CIDR (ex. 24)"
+
+           if($mask -eq 'q') {
+                $choix = $null
+                $ip = $null
+                $mask = $null
+                break
+           }
+     
+           $ipBin = convertIpDecToBin($ip)
+           $ipNice =  niceDisplayIpBin $ipBin 
+           $ipBinFormatted = niceDisplayIpBin $ipBin  $mask
+            
+
+            write-host "==> Prettyfied  : $ipNice"
+            write-host "==> Avec masque : $ipBinFormatted"
+        }
+    
     } else {
         # Comportement par défaut
         write-host "Bye !"

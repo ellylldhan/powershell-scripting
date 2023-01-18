@@ -1,12 +1,12 @@
 # ------------------------------------------------------------------------------------------------------------------   
-# Fonction pour le calcul de l'Adresse réseau, adresse Broadcast, premier hote, dernier hote et nombre d'hotes total.
- 
+# Fonction pour le calcul de l'Adresse reseau, adresse Broadcast, premier hote, dernier hote et nombre d'hotes total.
+
 function Calcul_Reseaux($AdresseIP, $Masque) {
     # Input  : 192.168.0.12
     # Output : "192", "168", "0", "12"
     $ipDecListe = $AdresseIP.Split('.')
-
     $ipBinString = ''
+
     foreach($ip in $ipDecListe) {
         $ipBinString += ([convert]::ToString($ip,2)).PadLeft(8, '0')
         # $ipBinStringSplit  += ([convert]::ToString($ip,2)).PadLeft(8, '0')
@@ -43,7 +43,8 @@ function Calcul_Reseaux($AdresseIP, $Masque) {
         $separated = $false
         if (($j -eq 7 -or $j -eq 15 -or $j -eq 23) -and $j -ne 0) {
             if ($j -eq ($Masque - 1)) {
-                $separator = ' | '
+                $separator = '|'
+                #$separator = ' | '
             } else {
                 $separator = '.'
             }
@@ -56,7 +57,8 @@ function Calcul_Reseaux($AdresseIP, $Masque) {
 
             $separated = $true
         } elseif ($j -eq ($Masque - 1) -and $separated -eq $false) {
-            $separator = ' | '
+            #$separator = ' | '
+            $separator = '|'
 
             $ipDonneeSplit+=$separator
             $ipReseauBin += $separator
@@ -77,17 +79,21 @@ function Calcul_Reseaux($AdresseIP, $Masque) {
     $ip4 = convertIpBinToDec($ipLastHost)
     $ip5 = convertIpBinToDec($ipBroadcast)
 
-    $mask_bin = niceDisplayIpBin(Calc_Mask($Masque))
-    $mask_ip  = convertIpBinToDec($mask_bin)
+    $maskStr = Calc_Mask($Masque)
+    $maskBin = niceDisplayIpBin($maskStr)
+    $maskIp  = convertIpBinToDec($maskBin)
+
+    $ipDonneeNice = niceDisplayIpBin($ipBinString)
+   
 
     write-host '-------------------------------------------------------------'
-    write-host "IP Donnée       " $ipBinString $ip1
-    write-host "Masque donné    " $Masque
-    Write-Host "IP Masque       " $mask_bin $mask_ip
-    Write-Host "IP Réseau       " $ipReseauBin $ip2
-    Write-Host "IP First Host   " $ipFirstHost $ip3
-    Write-Host "IP Last Host    " $ipLastHost  $ip4
-    Write-Host "IP Broadcast    " $ipBroadcast $ip5
+    write-host "IP Donnee       " $ipDonneeNice "@" $ip1 "/" $Masque
+    #write-host "Masque donne    " $Masque
+    Write-Host "IP Masque       " $maskBin "@" $maskIp
+    Write-Host "IP Reseau       " $ipReseauBin "@" $ip2
+    Write-Host "IP First Host   " $ipFirstHost "@" $ip3
+    Write-Host "IP Last Host    " $ipLastHost  "@" $ip4
+    Write-Host "IP Broadcast    " $ipBroadcast "@" $ip5
     write-host '-------------------------------------------------------------'
     
     # TODO: function convertIPToBin: string
@@ -105,12 +111,12 @@ function convertBinToDec($ip) {
     $ip = $ip.Replace('|', '')
     $ip = $ip.Replace(' ', '')
 
-    # Initialisation de la liste retournée
+    # Initialisation de la liste retournee
     $listeIP = ''
 
     # Boucle sur chaque char de l'ip
     for ($i=0;$i -lt $ip.Length; $i++) {
-        # Concatene chaque char de l'ip (on le reinit dès qu'on a un octet)
+        # Concatene chaque char de l'ip (on le reinit des qu'on a un octet)
         $a += $ip[$i]    
 
         # Si l'index est un multiple de 8, alors on a un octet (on ignore l'index 0)
@@ -123,7 +129,7 @@ function convertBinToDec($ip) {
                 $listeIP += '.' 
             }
 
-            # Réinitialisation du string qui stocke chaque bit de l'ip
+            # Reinitialisation du string qui stocke chaque bit de l'ip
             $a = ''
         }
     }
@@ -147,33 +153,35 @@ function niceDisplayIpBin($ip, $masque) {
     # IN  : '01010000101000100110010100111100' 19
     # OUT : 01010000.10100010.011 | 00101.00111100
     
-    # Initialisation de la variable qui sera retournée
+    # Initialisation de la variable qui sera retournee
     $ipBin = ''
 
     # 'tite Bouclette sur chaque char de la string $ip
     for($i=0; $i -lt 32; $i++) 
     {
-        # On commence par concaténer le char de l'ip
+        # On commence par concatener le char de l'ip
         $ipBin += $ip[$i]
 
-        # Séparation des octets
+        # Separation des octets
         if (($i -eq 7 -or $i -eq 15 -or $i -eq 23) -and $i -ne 0) 
         {
-            # Si index == masque, on sépare par '|'. Sinon par un '.'
+            # Si index == masque, on separe par '|'. Sinon par un '.'
             if ($i -eq ($masque - 1)) 
             {
-                $ipBin += ' | '
+                #$ipBin += ' | '
+                $ipBin += '|'
             } 
             else 
             {
                 $ipBin += '.'
             }
         } 
-        # Si c'est pas une séparation d'octet mais la séparation du masque
+        # Si c'est pas une separation d'octet mais la separation du masque
         elseif ($i -eq ($masque - 1)) 
         {
             # ... alors on ajoute un '|'
-            $ipBin += ' | '
+            #$ipBin += ' | '
+            $ipBin += '|'
         } 
     }
 
@@ -225,20 +233,20 @@ function Calc_Mask($mask) {
 ## M A I N ##
 #############
 
-Write-host "Bienvenue dans l'outil de calcul d'adresse réseau !"
+Write-host "Bienvenue dans l'outil de calcul d'adresse reseau !"
 
 $choix = $null
 while (($choix -ne 4) -or ($choix -ne 'q')) {
     write-host ""
-    write-host "   1) Calcul depuis adresse ip et masque en décimal (ex. 192.168.1.1/24)"
-    write-host "   2) Convertir une IP décimal en binaire (sans masque)"
-    write-host "   3) Convertir une IP décimal en binaire (avec masque)"
+    write-host "   1) Calcul d'adressage reseau d'apres IP et masque en decimal (ex. 192.168.1.1/24)"
+    write-host "   2) Convertir une IP decimal en binaire (sans masque)"
+    write-host "   3) Convertir une IP decimal en binaire (avec masque)"
     Write-host "   4) Quitter"
     write-host ""
     $choix = Read-host "Entrez votre choix"
 
     if ($choix -eq 1) {
-        # Calcul d'adresses réseau
+        # Calcul d'adresses reseau
         #TODO: nettoyage du prompt de la fonction Calcul_Reseaux
         while (($ip -ne 'q') -or ($mask -ne 'q')) {
             Write-Host ""
@@ -289,7 +297,7 @@ while (($choix -ne 4) -or ($choix -ne 'q')) {
             write-host "==> " $ipBinFormatted
         }
     } elseif ($choix -eq 3) {
-        # Convertir IP DECIMAL en BINAIRE avec séparation du masque
+        # Convertir IP DECIMAL en BINAIRE avec separation du masque
         while (($ip -ne 'q') -or ($mask -ne 'q'))  {
             Write-Host ""
             write-host "----------------------------------------------"
@@ -325,7 +333,7 @@ while (($choix -ne 4) -or ($choix -ne 'q')) {
         }
     
     } else {
-        # Comportement par défaut
+        # Comportement par defaut
         write-host "Bye !"
         break
     }
